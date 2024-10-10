@@ -1,0 +1,15 @@
+Requirements:
+
+
+Dependencies:
+npm install
+npm install axios react-router-dom react-toastify
+
+
+tailwindcss.com
+npm install -D tailwindcss postcss autoprefixer
+npx tailwind init-p
+
+
+https://www.color-hex.com/
+https://www.color-hex.com/color/ffbbc3
