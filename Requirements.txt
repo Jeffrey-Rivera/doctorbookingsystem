@@ -13,3 +13,6 @@ npx tailwind init-p
 
 https://www.color-hex.com/
 https://www.color-hex.com/color/ffbbc3
+
+
+# try
