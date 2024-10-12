@@ -15,6 +15,10 @@ https://www.color-hex.com/
 https://www.color-hex.com/color/ffbbc3
 
 
-# try
+# try push
 
 https://fonts.google.com/specimen/Outfit
+
+https://fonts.google.com/selection/embed
+@import 
+copy + paste at index.css

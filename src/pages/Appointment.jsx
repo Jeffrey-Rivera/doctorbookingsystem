@@ -2,29 +2,83 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { assets } from '../assets/assets'
+import RelatedDoctors from '../components/RelatedDoctors'
 
 const Appointment = () => {
 
   const { docId } = useParams()
   const { doctors, currencySymbol } = useContext(AppContext)
+  const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
   const [docInfo, setDocInfo] = useState(null)
   const [docSlots, setDocSlots] = useState([])
   const [slotIndex, setSlotIndex] = useState(0)
-  const [slotTime, setSlotTim] = useState('')
+  const [slotTime, setSlotTime] = useState('')
 
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId)
     setDocInfo(docInfo)
-    console.log(docInfo)
-
   }
 
+  const getAvailableSlots = async () => {
+    setDocSlots([])
+
+    //current date
+    let today = new Date()
+
+    for (let i = 0; i, 7; i++) {
+      //date with index
+      let currentDate = new Date(today)
+      currentDate.setDate(today.getDate() + i)
+
+      //end time of the date with the index
+      let endTime = new Date()
+      endTime.setDate(today.getDate() + i)
+      endTime.setHours(20, 0, 0, 0)
+
+      //set hours
+      if (today.getDate() === currentDate.getDate()) {
+        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
+        currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0)
+      } else {
+        currentDate.setHours(10)
+        currentDate.setMinutes(0)
+      }
+
+      let timeSlots = []
+
+      while (currentDate < endTime) {
+        let formattedTime = currentDate.toLocaleString([], { hour: '2 digit', minute: '2-digit' })
+
+        // add slot for array
+        timeSlots.push({
+          datetime: new Date(currentDate),
+          time: formattedTime
+        })
+
+        //increment from actual time by 30 mins
+        currentDate.setMinutes(currentDate.getMinutes() + 30)
+      }
+
+      setDocSlots(prev => ([...prev, timeSlots]))
+
+    }
+
+  }
 
 
   useEffect(() => {
     fetchDocInfo()
   }, [doctors, docId])
+
+  useEffect(() => {
+    getAvailableSlots
+  }, [docInfo])
+
+  useEffect(() => {
+    console.log(docSlots);
+
+  }, [docSlots])
 
 
   return docInfo && (
@@ -57,6 +111,34 @@ const Appointment = () => {
             Appointment fee: <span className='text-gray-700'>{currencySymbol}{docInfo.fees}</span>
           </p>
         </div>
+
+        {/* ---Booking Slots--  */}
+        <div className='sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-500'>
+          <p>Booking available</p>
+          <div className='flex gap-3 items-center w-full overflow-x-scroll mt-4'>
+            {
+              docSlots.length && docSlots.map((item, index) => (
+                <div onClick={() => setSlotIndex(index)} className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index ? 'bg-primary text-white' : 'border border-gray-400'} `} key={index}>
+                  <p>{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
+                  <p>{item[0] && item[0].datetime.getDate()}</p>
+                </div>
+              ))
+            }
+          </div>
+
+          <div className='flex items-center gap-3 w-full overflow-x-scroll mt-4'>
+            {docSlots.length && docSlots[slotIndex].map((item, index) => (
+              <p onClick={() => setSlotTime(item.time)} className={`text-sm font-light flex-shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.time === slotTime ? 'bg-primary text-white' : 'text-gray-500 border border-gray-400'}`} key={index}>
+                {item.time.toLowercase()}
+              </p>
+            ))}
+          </div>
+          <button className='bg-primary text-white text sm font-light px-14 py-3 rounded-full my-6'>Request an appointment</button>
+        </div>
+
+        {/*---Related Doctor---*/}
+        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
+
       </div>
     </div>
   )
