@@ -22,3 +22,11 @@ https://fonts.google.com/specimen/Outfit
 https://fonts.google.com/selection/embed
 @import 
 copy + paste at index.css
+
+
+
+# Backend setup
+npm init 
+npm install express mongoose multer bcrypt cloudinary cors dotenv jsonwebtoken nodemon validation
+npm install validator
+npm install bcryptjs
