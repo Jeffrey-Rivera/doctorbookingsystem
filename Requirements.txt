@@ -8,7 +8,7 @@ npm install axios react-router-dom react-toastify
 
 tailwindcss.com
 npm install -D tailwindcss postcss autoprefixer
-npx tailwind init-p
+npx tailwindcss init -p
 
 
 https://www.color-hex.com/
@@ -22,3 +22,15 @@ https://fonts.google.com/specimen/Outfit
 https://fonts.google.com/selection/embed
 @import 
 copy + paste at index.css
+
+
+
+# Backend setup
+npm init 
+npm install express mongoose multer bcrypt cloudinary cors dotenv jsonwebtoken nodemon validation
+npm install validator
+npm install bcryptjs
+
+# admin folder setup
+npm install 
+npm install axios react-router-dom react-toastify
