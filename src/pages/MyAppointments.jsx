@@ -23,7 +23,10 @@ const MyAppointments = () => {
               <p className='text-xs mt-1'><span className='text-sm text-neutral-800 font-medium'>Date & Time:</span> 1, November, 2024 | 9:30 AM</p>
             </div>
             <div></div>
-
+            <div className='flex flex-col gap-2 justify-end'>
+              <button className='text-sm text-stone-600 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-500'>Pay Online</button>
+              <button className='text-sm text-stone-600 text-center sm:min-w-48 py-2 border  hover:bg-red-600 hover:text-white transition-all duration-500'>Cancel My Appointment</button>
+            </div>
           </div>
         ))}
       </div>
