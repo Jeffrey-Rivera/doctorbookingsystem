@@ -2,24 +2,26 @@ import React, { useState } from 'react';
 import { assets } from '../assets/assets';
 
 const MyProfile = () => {
+
   const [userData, setUserData] = useState({
-    name: 'Edward Vincent',
+    name: 'John Wick',
     image: assets.profile_pic,
-    email: 'richardjameswap@gmail.com',
+    email: 'johnwick@gmail.com',
     phone: '+1 123 456 7890',
     address: {
-      line1: '57th Cross, Richmond',
-      line2: 'Circle, Church Road, London',
+      line1: '66 Auburn Meadows View, SouthEast',
+      line2: 'Calgary T3M 2C8, Alberta, Canada',
     },
     gender: 'male',
-    dob: '1990-01-01',
+    dob: '1980-01-01',
   });
 
   const [isEdit, setIsEdit] = useState(false);
 
   return (
-    <div>
-      <img src={userData.image} alt="Profile" />
+    <div className='max-w-lg flex flex-col gap-2 text-sm'>
+
+      <img className='w-36 rounded' src={userData.image} alt="Profile" />
 
       {isEdit ? (
         <input
