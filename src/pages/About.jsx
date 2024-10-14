@@ -25,15 +25,15 @@ const About = () => {
 
       <div className='flex flex-col md:flex-row mb-20'>
         <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-          <b>Content 1</b>
+          <b>Experience</b>
           <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
         </div>
         <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-          <b>Content 2</b>
+          <b>Location</b>
           <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
         </div>
         <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-          <b>Content 3</b>
+          <b>Community</b>
           <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
         </div>
       </div>
