@@ -19,7 +19,7 @@ const Contact = () => {
           <p className='text-gray-500'>Tel: (587) 1234567 <br /> Email: doctorbooking@gmail.com </p>
           <p className='font-semibold text-lg text-gray-600'>Careers at Doctor Booking</p>
           <p className='text-gray-500'>Be one of our elite and TOP DOCTORS...</p>
-          <button className='border border-black px-8 py-4 text-sm hover:bg-pink-300 hover:text-white transition-all duration-500'>Join Us</button>
+          <button className='border border-black px-8 py-4 text-sm hover:bg-pink-200 hover:text-white transition-all duration-500'>Join Us</button>
         </div>
 
 

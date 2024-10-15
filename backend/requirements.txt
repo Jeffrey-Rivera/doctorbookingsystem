@@ -1,0 +1,10 @@
+
+# Backend setup
+npm init 
+npm install express mongoose multer bcrypt cloudinary cors dotenv jsonwebtoken nodemon validation
+npm install validator
+npm install bcryptjs
+
+
+#JSON text to stringified text
+https://onlinetexttools.com/json-stringify-text
