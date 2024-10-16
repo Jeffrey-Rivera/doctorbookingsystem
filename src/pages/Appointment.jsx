@@ -15,9 +15,11 @@ const Appointment = () => {
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
 
+  
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId)
     setDocInfo(docInfo)
+    console.log(docInfo);
   }
 
   const getAvailableSlots = async () => {
@@ -26,7 +28,7 @@ const Appointment = () => {
     //current date
     let today = new Date()
 
-    for (let i = 0; i, 7; i++) {
+    for (let i = 0; i < 7; i++) {
       //date with index
       let currentDate = new Date(today)
       currentDate.setDate(today.getDate() + i)
@@ -48,7 +50,8 @@ const Appointment = () => {
       let timeSlots = []
 
       while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleString([], { hour: '2 digit', minute: '2-digit' })
+        let formattedTime = currentDate.toLocaleString([], { hour: '2-digit', minute: '2-digit' })
+
 
         // add slot for array
         timeSlots.push({
@@ -72,7 +75,7 @@ const Appointment = () => {
   }, [doctors, docId])
 
   useEffect(() => {
-    getAvailableSlots
+    getAvailableSlots()
   }, [docInfo])
 
   useEffect(() => {
