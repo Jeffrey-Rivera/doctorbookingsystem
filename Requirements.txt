@@ -24,14 +24,11 @@ https://fonts.google.com/selection/embed
 copy + paste at index.css
 
 
-
-# Backend setup
-npm init 
-npm install express mongoose multer bcrypt cloudinary cors dotenv jsonwebtoken nodemon validation
-npm install validator
-npm install bcryptjs
-
 # admin folder setup
+npm create vite@latest
+- project name, framework = react, and variant = JavaScript
+
+
 npm install 
 npm install axios react-router-dom react-toastify
 npm install axios
