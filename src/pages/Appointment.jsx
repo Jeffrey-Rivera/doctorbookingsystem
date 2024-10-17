@@ -92,7 +92,7 @@ const Appointment = () => {
           <img className='bg-primary w-full sm:max-w-72 rounded-lg' src={docInfo.image} alt="" />
         </div>
 
-        <div className='"flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-pink-100 mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>
+        <div className='flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-pink-100 mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>
           {/* ---Doc Info : name, degree, experience--- */}
           <p className='flex items-center gap-2 text-2xl font-medium text-gray-500'>
             {docInfo.name}
