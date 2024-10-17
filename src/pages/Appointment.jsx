@@ -15,9 +15,11 @@ const Appointment = () => {
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
 
+  
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId)
     setDocInfo(docInfo)
+    console.log(docInfo);
   }
 
   const getAvailableSlots = async () => {
@@ -26,7 +28,7 @@ const Appointment = () => {
     //current date
     let today = new Date()
 
-    for (let i = 0; i, 7; i++) {
+    for (let i = 0; i < 7; i++) {
       //date with index
       let currentDate = new Date(today)
       currentDate.setDate(today.getDate() + i)
@@ -48,7 +50,8 @@ const Appointment = () => {
       let timeSlots = []
 
       while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleString([], { hour: '2 digit', minute: '2-digit' })
+        let formattedTime = currentDate.toLocaleString([], { hour: '2-digit', minute: '2-digit' })
+
 
         // add slot for array
         timeSlots.push({
@@ -72,7 +75,7 @@ const Appointment = () => {
   }, [doctors, docId])
 
   useEffect(() => {
-    getAvailableSlots
+    getAvailableSlots()
   }, [docInfo])
 
   useEffect(() => {
@@ -89,7 +92,7 @@ const Appointment = () => {
           <img className='bg-primary w-full sm:max-w-72 rounded-lg' src={docInfo.image} alt="" />
         </div>
 
-        <div className='"flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-pink-100 mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>
+        <div className='flex-1 border border-gray-400 rounded-lg p-8 py-7 bg-pink-100 mx-2 sm:mx-0 mt-[-80px] sm:mt-0'>
           {/* ---Doc Info : name, degree, experience--- */}
           <p className='flex items-center gap-2 text-2xl font-medium text-gray-500'>
             {docInfo.name}
