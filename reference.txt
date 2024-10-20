@@ -19,4 +19,11 @@ https://youtube.com/playlist?list=PLuHGmgpyHfRw0wBGN8knxsJsMi74r34zw&si=_Vtra_Fm
 https://www.youtube.com/watch?v=eRTTlS0zaW8&t=11170s
 
 Documents
+https://jsonformatter.org/json-stringify-online
+https://cloudinary.com/
+
+chatgpt
+file name: userController.js
+"Lets do this "Handle Errors from Cloudinary"
+
 
