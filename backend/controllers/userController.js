@@ -4,6 +4,7 @@ import userModel from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js';
+import appointmentModel from '../models/appointmentModel.js';
 
 // api to register user
 const registerUser = async (req,res) => {
@@ -153,7 +154,7 @@ const bookAppointment = async (req,res) => {
         // checking for slot availability
         if (slots_booked[slotDate]) {
             if (slots_booked[slotDate].includes(slotTime)) {
-                return res.json({success:false,message:'Sorry, Slot not available'})
+                return res.json({success:false,message:'Oops sorry, Slot not available'})
             } else {
                 slots_booked[slotDate].push (slotTime)
             }
@@ -162,7 +163,7 @@ const bookAppointment = async (req,res) => {
             slots_booked[slotDate].push(slotTime)
         }
 
-        const userData = await user.Model.findById(userId).select('-password')
+        const userData = await userModel.findById(userId).select('-password')
 
         delete docData.slots_booked
 
@@ -177,7 +178,7 @@ const bookAppointment = async (req,res) => {
             date: Date.now()
         }
 
-        const newAppointment  = new appointmentModel (appointmentData)
+        const newAppointment = new appointmentModel(appointmentData)
         await newAppointment.save()
 
         // Save new slots data in docData
@@ -186,7 +187,7 @@ const bookAppointment = async (req,res) => {
         res.json({success:true,message:'Appointment Booked!'})
         
     } catch (error) {
-        console.error('Update profile failed:', error);
+        console.error('failed...', error);
         res.json({ success: false, message: error.message });
     }
 }
