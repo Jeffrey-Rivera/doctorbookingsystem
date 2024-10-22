@@ -137,5 +137,14 @@ const updateProfile = async (req, res) => {
     }
 };
 
+// API to book appointment
+const bookAppointment = async (req,res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
 
 export {registerUser,loginUser, getProfile, updateProfile}
