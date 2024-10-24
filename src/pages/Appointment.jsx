@@ -19,6 +19,13 @@ const Appointment = () => {
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
 
+  const clearForm = () => {
+    setSlotTime('');
+    setSlotIndex(0);
+    // Add any other state resets needed
+  };
+
+
 
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId)
@@ -159,28 +166,35 @@ const Appointment = () => {
         </div>
       </div>
 
-        {/* ---Booking Slots-- */}
-        <div className='sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-500'>
-          <p>Booking slots</p>
-          <div className='flex gap-3 items-center w-full overflow-x-scroll mt-4'>
-            {
-            docSlots.length && docSlots.map((item,index)=>(
+      {/* ---Booking Slots-- */}
+      <div className='sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-500'>
+        <p>Booking slots</p>
+        <div className='flex gap-3 items-center w-full overflow-x-scroll mt-4'>
+          {
+            docSlots.length && docSlots.map((item, index) => (
               <div onClick={() => setSlotIndex(index)} className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index ? 'bg-primary text-white' : 'border border-gray-400'} `} key={index}>
                 <p>{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
                 <p>{item[0] && item[0].datetime.getDate()}</p>
               </div>
             ))
-         }
-       </div>
+          }
+        </div>
 
-       <div className='flex items-center gap-3 w-full overflow-x-scroll mt-4'>
-        {docSlots.length && docSlots[slotIndex].map((item, index) => (
-          <p onClick={() => setSlotTime(item.time)} className={`text-sm font-light flex-shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.time === slotTime ? 'bg-primary text-white' : 'text-gray-500 border border-gray-400'}`} key={index}>
-            {item.time.toLowerCase()}
-          </p>
-        ))}
-       </div>
-       <button onClick={bookAppointment} className='bg-primary text-white text sm font-light px-14 py-3 rounded-full my-6'>Request an appointment</button>
+        <div className='mt-4'>
+          <select
+            onChange={(e) => setSlotTime(e.target.value)} value={slotTime}
+            className={`text-medium font-medium rounded-full px-4 py-2 ${slotTime ? 'bg-primary text-white border-transparent' : 'bg-white text-gray-500'}`}>
+            <option value="" disabled>Select a time</option>
+            {docSlots.length > 0 && docSlots[slotIndex].map((item, index) => (
+              <option key={index} value={item.time}>
+                {item.time.toLowerCase()}
+              </option>
+            ))}
+          </select>
+
+        </div>
+        <button onClick={bookAppointment} className='bg-white text-gray-500 border border-gray-400 px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all'>Request an appointment</button>
+        <button onClick={clearForm} className='bg-white text-gray-500 border border-gray-400 px-8 py-2 rounded-full hover:bg-red-600 hover:text-white transition-all my-6 ml-8'> Clear </button>
       </div>
 
       {/* ---Related Doctors--- */}
