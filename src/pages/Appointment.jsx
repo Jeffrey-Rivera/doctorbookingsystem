@@ -36,20 +36,20 @@ const Appointment = () => {
   const getAvailableSlots = async () => {
     setDocSlots([])
 
-    //current date
+    // Current date
     let today = new Date()
 
     for (let i = 0; i < 7; i++) {
-      //date with index
+      // Date with index
       let currentDate = new Date(today)
       currentDate.setDate(today.getDate() + i)
 
-      //end time of the date with the index
+      // End time of the date with the index
       let endTime = new Date()
       endTime.setDate(today.getDate() + i)
-      endTime.setHours(21, 0, 0, 0)
+      endTime.setHours(17, 0, 0, 0)
 
-      //set hours
+      // Set hours
       if (today.getDate() === currentDate.getDate()) {
         currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
         currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0)
@@ -64,27 +64,24 @@ const Appointment = () => {
         let formattedTime = currentDate.toLocaleString([], { hour: '2-digit', minute: '2-digit' })
         let day = currentDate.getDate()
         let month = currentDate.getMonth() + 1
-        let year = currentDate.getFullYear
+        let year = currentDate.getFullYear()
 
         const slotDate = day + "_" + month + "_" + year
-        const slotTime = formattedTime
-
-        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true
+        const isSlotAvailable = !(docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(formattedTime));
 
         if (isSlotAvailable) {
-          // add slot for array
+          // Add slot to array
           timeSlots.push({
             datetime: new Date(currentDate),
             time: formattedTime
-          })
+          });
         }
 
-        //increment from actual time by 30 mins
-        currentDate.setMinutes(currentDate.getMinutes() + 30)
+        // Increment from actual time by 30 mins
+        currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
 
-      setDocSlots(prev => ([...prev, timeSlots]))
-
+      setDocSlots(prev => ([...prev, timeSlots]));
     }
 
   }
@@ -182,7 +179,8 @@ const Appointment = () => {
 
         <div className='mt-4'>
           <select
-            onChange={(e) => setSlotTime(e.target.value)} value={slotTime}
+            onChange={(e) => setSlotTime(e.target.value)}
+            value={slotTime}
             className={`text-medium font-medium rounded-full px-4 py-2 ${slotTime ? 'bg-primary text-white border-transparent' : 'bg-white text-gray-500'}`}>
             <option value="" disabled>Select a time</option>
             {docSlots.length > 0 && docSlots[slotIndex].map((item, index) => (
