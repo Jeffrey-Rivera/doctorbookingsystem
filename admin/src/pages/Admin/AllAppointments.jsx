@@ -3,10 +3,12 @@ import { useContext } from 'react'
 import { AdminContext } from '../../context/AdminContext'
 import { useEffect } from 'react'
 import { AppContext } from '../../context/AppContext'
+import cancelIcon from '../../assets/cancel_icon.svg'
+
 
 const AllAppointments = () => {
 
-  const {aToken, appointments, getAllAppointments} = useContext(AdminContext)
+  const {aToken, appointments, getAllAppointments, cancelAppointment} = useContext(AdminContext)
   const {calculateAge, slotDateFormat, currency  } = useContext(AppContext)
 
   useEffect(() => {
@@ -42,10 +44,14 @@ const AllAppointments = () => {
               <img className='w-8 rounded-full bg-pink-200' src={item.docData.image} alt= '' /> <p>{item.docData.name}</p> 
             </div>
             <p>{currency}{item.amount}</p>
+            {
+            item.cancelled
+            ? <p className='text-red-400 font-medium'>Cancelled</p>
+            : <img onClick={()=> cancelAppointment(item._id)} className="w-10 cursor-pointer" src={cancelIcon} alt="" />
+            }
+            
           </div>
         ))}
-
-
 
       </div>
     </div>
