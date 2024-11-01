@@ -4,6 +4,8 @@ npm init
 npm install express mongoose multer bcrypt cloudinary cors dotenv jsonwebtoken nodemon validation
 npm install validator
 npm install bcryptjs
+npm install nodemailer
+npm install date-fns
 
 
 #JSON text to stringified text
