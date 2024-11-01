@@ -9,7 +9,7 @@ const Contact = () => {
         <p>CONTACT <span className='text-gray-800 font semibold'>US</span></p>
       </div>
 
-      <div className='my-10 flex flex-col justify-center md:flex-row gap-10 mb-28 text-sm'>
+      <div className='my-8 flex flex-col justify-center md:flex-row gap-10 mb-28 text-sm'>
 
         <img className='w-full md:max-w-[369px]' src={assets.contact_image} alt="" />
 
@@ -19,7 +19,7 @@ const Contact = () => {
           <p className='text-gray-500'>Tel: (587) 1234567 <br /> Email: doctorbooking@gmail.com </p>
           <p className='font-semibold text-lg text-gray-600'>Careers at Doctor Booking</p>
           <p className='text-gray-500'>Be one of our elite and TOP DOCTORS...</p>
-          <button className='border border-black px-8 py-4 text-sm hover:bg-pink-200 hover:text-white transition-all duration-500'>Join Us</button>
+          <a href="/careers" className='border border-black px-8 py-4 text-sm hover:bg-pink-200 hover:text-white transition-all duration-500'>Join Us</a>
         </div>
 
 
