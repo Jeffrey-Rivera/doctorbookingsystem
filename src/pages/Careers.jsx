@@ -1,43 +1,147 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { assets } from '../assets/assets'
 
 const Careers = () => {
+    const [selectedJob, setSelectedJob] = useState(null);
+
+    const handleApplyClick = (jobTitle) => {
+        setSelectedJob(jobTitle);
+        document.getElementById(`resume-upload-${jobTitle}`).click(); // Trigger the file input click
+    };
+
+    const handleFileUpload = (event, jobTitle) => {
+        const file = event.target.files[0];
+        if (file) {
+            if (file.type === 'application/pdf') {
+                toast.success("PDF successfully submitted!");
+            } else {
+                toast.error("Please upload a PDF file.");
+            }
+        }
+    };
+
     return (
         <div>
+            <ToastContainer />
 
-            <div className='text-center text-2xl pt-10 text-gray-500'>
-                <p>ABOUT <span className='text-gray-700 font-medium'>US</span></p>
+            {/* Available Positions Section */}
+            <div className='text-center text-xl my-6'>
+                <p>CURRENT <span className='text-gray-500 font-semibold'>OPENINGS</span></p>
             </div>
 
-            <div className='my-6 flex flex-col md:flex-row gap 12'>
-                <img className='w-full md:max-w-[369px]' src={assets.about_image} alt="" />
-                <div className='flex flex-col justify-center gap-6 md:w-2/4 text-sm text-gray-500'>
-                    <p>Welcome to Doctor Booking</p>
-                    <p>Healthcare Technology</p>
-                    <b className='text-gray-500'> Our Vision</b>
-                    <p>Our vision...</p>
+            <div className='flex flex-col gap-8 mb-12 px-4 md:px-16'>
+                {/* Job Opening 1 */}
+                <div className='border p-6 shadow-md rounded-lg flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-lg font-semibold text-gray-700'>Dermatologist</h3>
+                        <p className='text-gray-500 mt-2'>Experience: 3+ years</p>
+                        <p className='text-gray-500'>Annual Salary: $100,000 - $120,000</p>
+                    </div>
+                    <button
+                        className='bg-pink-300 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-pink-400 transition duration-300'
+                        onClick={() => handleApplyClick('Dermatologist')}
+                    >
+                        Apply
+                    </button>
+                    <input
+                        type="file"
+                        id="resume-upload-Dermatologist"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => handleFileUpload(e, 'Dermatologist')}
+                    />
+                </div>
+
+                {/* Job Opening 2 */}
+                <div className='border p-6 shadow-md rounded-lg flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-lg font-semibold text-gray-700'>Gynecologist</h3>
+                        <p className='text-gray-500 mt-2'>Experience: 5+ years</p>
+                        <p className='text-gray-500'>Annual Salary: $120,000 - $140,000</p>
+                    </div>
+                    <button
+                        className='bg-pink-300 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-pink-400 transition duration-300'
+                        onClick={() => handleApplyClick('Gynecologist')}
+                    >
+                        Apply
+                    </button>
+                    <input
+                        type="file"
+                        id="resume-upload-Gynecologist"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => handleFileUpload(e, 'Gynecologist')}
+                    />
+                </div>
+
+                {/* Job Opening 3 */}
+                <div className='border p-6 shadow-md rounded-lg flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-lg font-semibold text-gray-700'>Gastroenterologist</h3>
+                        <p className='text-gray-500 mt-2'>Experience: 7+ years</p>
+                        <p className='text-gray-500'>Annual Salary: $160,000 - $180,000</p>
+                    </div>
+                    <button
+                        className='bg-pink-300 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-pink-400 transition duration-300'
+                        onClick={() => handleApplyClick('Gastroenterologist')}
+                    >
+                        Apply
+                    </button>
+                    <input
+                        type="file"
+                        id="resume-upload-Gastroenterologist"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => handleFileUpload(e, 'Gastroenterologist')}
+                    />
+                </div>
+
+                {/* Job Opening 4 */}
+                <div className='border p-6 shadow-md rounded-lg flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-lg font-semibold text-gray-700'>Pediatrician</h3>
+                        <p className='text-gray-500 mt-2'>Experience: 4+ years</p>
+                        <p className='text-gray-500'>Annual Salary: $120,000 - $140,000</p>
+                    </div>
+                    <button
+                        className='bg-pink-300 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-pink-400 transition duration-300'
+                        onClick={() => handleApplyClick('Pediatrician')}
+                    >
+                        Apply
+                    </button>
+                    <input
+                        type="file"
+                        id="resume-upload-Pediatrician"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => handleFileUpload(e, 'Pediatrician')}
+                    />
+                </div>
+
+                {/* Job Opening 5 */}
+                <div className='border p-6 shadow-md rounded-lg flex justify-between items-center'>
+                    <div>
+                        <h3 className='text-lg font-semibold text-gray-700'>Neurologist</h3>
+                        <p className='text-gray-500 mt-2'>Experience: 5+ years</p>
+                        <p className='text-gray-500'>Annual Salary: $150,000 - $170,000</p>
+                    </div>
+                    <button
+                        className='bg-pink-300 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-pink-400 transition duration-300'
+                        onClick={() => handleApplyClick('Neurologist')}
+                    >
+                        Apply
+                    </button>
+                    <input
+                        type="file"
+                        id="resume-upload-Neurologist"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => handleFileUpload(e, 'Neurologist')}
+                    />
                 </div>
             </div>
-
-            <div className='text-center text-xl my-4'>
-                <p>Why <span className='text-gray-500 font-semibold'>CHOOSE US</span></p>
-            </div>
-
-            <div className='flex flex-col md:flex-row mb-20'>
-                <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-                    <b>Experience</b>
-                    <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
-                </div>
-                <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-                    <b>Location</b>
-                    <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
-                </div>
-                <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col fap-5 text-[15px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
-                    <b>Community</b>
-                    <p>Lorem ipsum dolor sit, iste debitis. Tempora!</p>
-                </div>
-            </div>
-
         </div>
     )
 }
