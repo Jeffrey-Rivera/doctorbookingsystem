@@ -75,11 +75,11 @@ const Login = () => {
           <p>Password</p>
           <input className='border border-gray-400 rounded w-full p-2 mt-1' type='password' onChange={(e) => setPassword(e.target.value)} value={password} required />
         </div>
-        <button type='submit' className='bg-primary text-white w-full py-2 rounded-md text-base'>{state === 'Sign Up' ? "Create Account" : "Login"}</button>
+        <button type='submit' className='bg-primary text-white w-full py-2 rounded-md text-base hover:bg-primary-light'>{state === 'Sign Up' ? "Create Account" : "Login"}</button>
         {
           state === "Sign Up"
-            ? <p>Already have an account? <span onClick={() => setState('Login')} className="text-primary underline cursor-pointer">Login here</span></p>
-            : <p>Create an new account? <span onClick={() => setState('Sign Up')} className="text-primary underline cursor-pointer">click here</span></p>
+            ? <p>Already have an account? <span onClick={() => setState('Login')} className="text-primary hover:text-primary-light underline cursor-pointer">Login here</span></p>
+            : <p>Create an new account? <span onClick={() => setState('Sign Up')} className="text-primary hover:text-primary-light underline cursor-pointer">Click here</span></p>
         }
       </div>
     </form>

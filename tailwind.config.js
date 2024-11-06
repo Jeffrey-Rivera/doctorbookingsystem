@@ -6,12 +6,13 @@ export default {
   ],
   theme: {
     extend: {
-      colors:{
-        'primary':"#ffcbd0"
+      colors: {
+        'primary': "#ffcbd0", // Primary color
+        'primary-light': "#FFA2AD", // Light color for hover
       },
-      gridTemplateColumns:{
-        'auto':'repeat(auto-fill, minmax(200px, 1fr))'
-      }
+      gridTemplateColumns: {
+        'auto': 'repeat(auto-fill, minmax(200px, 1fr))',
+      },
     },
   },
   plugins: [],

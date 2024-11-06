@@ -10,3 +10,6 @@ npm install date-fns
 
 #JSON text to stringified text
 https://onlinetexttools.com/json-stringify-text
+
+# For resume
+npm install multer
