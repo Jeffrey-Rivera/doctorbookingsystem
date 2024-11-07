@@ -55,6 +55,23 @@ const MyAppointments = () => {
 
   }
 
+  const appointmentStripe = async (appointmentId) => {
+    console.log('Attempting to make payment for appointment ID:', appointmentId);  // Add this line
+
+    try {
+        const { data } = await axios.post(`${backendUrl}/api/user/payment-stripe`, { appointmentId }, { headers: { token } });
+
+        if (data.success) {
+            console.log('PaymentIntent:', data.paymentIntent);
+        } else {
+            console.log('Payment failed:', data.message);
+        }
+    } catch (error) {
+        console.error('Error during payment:', error.message);
+    }
+};
+
+
   useEffect(() => {
     if (token) {
       getUserAppointments()
@@ -80,7 +97,7 @@ const MyAppointments = () => {
             </div>
             <div></div>
             <div className='flex flex-col gap-2 justify-end'>
-              {!item.cancelled && <button className='text-sm text-stone-600 text-center sm:min-w-48 py-2 border hover:bg-pink-200 hover:text-white transition-all duration-500'>Pay Online</button>}
+              {!item.cancelled && <button onClick={()=>appointmentStripe(item._id)} className='text-sm text-stone-600 text-center sm:min-w-48 py-2 border hover:bg-pink-200 hover:text-white transition-all duration-500'>Pay Online</button>}
               {!item.cancelled && <button onClick={() => cancelAppointment(item._id)} className='text-sm text-stone-600 text-center sm:min-w-48 py-2 border  hover:bg-red-600 hover:text-white transition-all duration-500'>Cancel My Appointment</button>}
               {item.cancelled && <button className='sm:min w-48 py-3 border border-red-600 rounded text-red-500'>Appointment Cancelled</button>}
             </div>

@@ -7,6 +7,7 @@ import doctorModel from '../models/doctorModel.js';
 import appointmentModel from '../models/appointmentModel.js';
 import nodemailer from 'nodemailer'; 
 import { format } from 'date-fns'; 
+import stripe from 'stripe';
 
 // Setting up Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -267,6 +268,41 @@ const cancelAppointment = async (req, res) => {
         console.log(error);
         res.json({ success: false, message: error.message });
     }
+}
+
+const stripeInstance = stripe(process.env.STRIPE_KEY_SECRET);
+
+// API to make payment of appointment using Stripe
+const paymentStripe = async (req, res) => {
+    try {
+        console.log('Received appointmentId:', req.body.appointmentId); // Add this line
+        
+        const { appointmentId } = req.body;
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (!appointmentData || appointmentData.cancelled) {
+            return res.json({ success: false, message: 'Appointment Cancelled or not found' });
+        }
+
+        const userEmail = appointmentData.userData?.email;
+        if (!validator.isEmail(userEmail)) {
+            return res.status(400).json({ success: false, message: 'Invalid user email address' });
+        }
+
+        const paymentIntent = await stripeInstance.paymentIntents.create({
+            amount: appointmentData.amount * 100, // Amount in cents
+            currency: 'CAD',
+            receipt_email: userEmail,
+        });
+
+        console.log('PaymentIntent created:', paymentIntent); // Add this line
+        res.json({ success: true, paymentIntent });
+    } catch (error) {
+        console.log('Error in paymentStripe API:', error); // Add this line
+        res.json({ success: false, message: error.message });
+    }
 };
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment };
+
+
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentStripe };
