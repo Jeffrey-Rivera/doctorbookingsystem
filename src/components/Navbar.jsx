@@ -28,6 +28,10 @@ const Navbar = () => {
                     <li className='py-1'>DOCTORS</li>
                     <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
                 </NavLink>
+                <NavLink to='/careers'>
+                    <li className='py-1'>CAREERS</li>
+                    <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
+                </NavLink>
                 <NavLink to='/about'>
                     <li className='py-1'>ABOUT US</li>
                     <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
@@ -51,7 +55,7 @@ const Navbar = () => {
                                 </div>
                             </div>
                         </div>
-                        : <button onClick={() => navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block'>Create account</button>
+                        : <button onClick={() => navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block hover:bg-primary-light'>Create account</button>
                 }
             </div>
         </div>
