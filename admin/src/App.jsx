@@ -1,8 +1,5 @@
-
 import React, {useContext} from 'react'
 import Login from './pages/Login'
-import React, { useContext } from 'react'
-import Login from './pages/AdminLogin'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AdminContext } from './context/AdminContext';
@@ -24,7 +21,6 @@ const App = () => {
 
   const {aToken} = useContext(AdminContext)
   const {dToken} = useContext(DoctorContext)
-  const { aToken } = useContext(AdminContext)
 
   return aToken || dToken ? (
     <div className="bg-[#F8F9Fd]">
@@ -45,12 +41,6 @@ const App = () => {
           <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
           <Route path='/doctor-appointments' element={<DoctorAppointments />} />
           <Route path='/doctor-profile' element={<DoctorProfile/>} />
-
-          <Route path='/admin-dashboard' element={<Dashboard />} />
-          <Route path='/all-appointments' element={<AllAppointments />} />
-          <Route path='/add-doctor' element={<AddDoctor />} />
-          <Route path='/doctor-list' element={<DoctorList />} />
-
         </Routes>
       </div>
     </div>
