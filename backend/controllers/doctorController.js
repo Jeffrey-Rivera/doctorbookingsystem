@@ -87,9 +87,9 @@ const appointmentCompleted = async (req, res) => {
     try {
         
         const {docId, appointmentId} = req.body 
-
+        // Finds the appointment by ID.
         const appointmentData = await appointmentModel.findById(appointmentId)
-
+        // Checks if the appointment belongs to the doctor.
         if (appointmentData && appointmentData.docId === docId) {
 
             await appointmentModel.findByIdAndUpdate(appointmentId,{isCompleted: true})
