@@ -6,7 +6,7 @@ import appointmentModel from "../models/appointmentModel.js";
 
 const changeAvailability = async (req,res) => {
     try {
-        
+        //Extracts docId from the request body.
         const {docId} = req.body 
 
         const docData = await doctorModel.findById(docId)
@@ -22,7 +22,8 @@ const changeAvailability = async (req,res) => {
 
 const doctorList = async (req,res) => {
     try {
-
+        // The empty object {} as the parameter means that there are no specific conditions, so it fetches all documents in the collection.
+        // Retrieves all doctor documents, excluding their password and email fields.
         const doctors = await doctorModel.find({}).select(['-password', '-email' ])
 
         res.json({success:true,doctors})
@@ -46,7 +47,7 @@ const loginDoctor = async (req, res) => {
         if (!doctor) {
             return res.json({ success: false, message: "Invalid credentials" });
         }
-
+        // Compares the provided password with the hashed password in the database.
         const isMatch = await bcrypt.compare(password, doctor.password);
         
         if (isMatch) {
@@ -70,6 +71,7 @@ const appointmentsDoctor = async (req, res) => {
     try {
 
         const { docId } = req.body
+        // Finds all appointments associated with the docId.
         const appointments = await appointmentModel.find({ docId })
 
         res.json({ success: true, appointments })
