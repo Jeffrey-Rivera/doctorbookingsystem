@@ -6,10 +6,11 @@ import appointmentModel from "../models/appointmentModel.js";
 
 const changeAvailability = async (req,res) => {
     try {
-        
+        //Extracts docId from the request body.
         const {docId} = req.body 
 
         const docData = await doctorModel.findById(docId)
+        //Updates the available status of the doctor by toggling its current value.
         await doctorModel.findByIdAndUpdate(docId,{available: !docData.available })
         res.json({success:true, message: 'Availability Changed'})
 
@@ -21,7 +22,8 @@ const changeAvailability = async (req,res) => {
 
 const doctorList = async (req,res) => {
     try {
-
+        // The empty object {} as the parameter means that there are no specific conditions, so it fetches all documents in the collection.
+        // Retrieves all doctor documents, excluding their password and email fields.
         const doctors = await doctorModel.find({}).select(['-password', '-email' ])
 
         res.json({success:true,doctors})
@@ -45,7 +47,7 @@ const loginDoctor = async (req, res) => {
         if (!doctor) {
             return res.json({ success: false, message: "Invalid credentials" });
         }
-
+        // Compares the provided password with the hashed password in the database.
         const isMatch = await bcrypt.compare(password, doctor.password);
         
         if (isMatch) {
@@ -69,6 +71,7 @@ const appointmentsDoctor = async (req, res) => {
     try {
 
         const { docId } = req.body
+        // Finds all appointments associated with the docId.
         const appointments = await appointmentModel.find({ docId })
 
         res.json({ success: true, appointments })
@@ -84,9 +87,9 @@ const appointmentCompleted = async (req, res) => {
     try {
         
         const {docId, appointmentId} = req.body 
-
+        // Finds the appointment by ID.
         const appointmentData = await appointmentModel.findById(appointmentId)
-
+        // Checks if the appointment belongs to the doctor.
         if (appointmentData && appointmentData.docId === docId) {
 
             await appointmentModel.findByIdAndUpdate(appointmentId,{isCompleted: true})
@@ -124,6 +127,8 @@ const appointmentCancel = async (req, res) => {
         res.json({ success: false, message:error.message})   
     }
 }
+
+
 
 // API to get dashboard data for doctor panel
 const doctorDashboard = async (req, res) => {
@@ -176,3 +181,4 @@ const doctorProfile = async (req, res)=> {
 }
 
 export {changeAvailability,doctorList, loginDoctor, appointmentsDoctor, appointmentCancel, appointmentCompleted, doctorDashboard}
+
