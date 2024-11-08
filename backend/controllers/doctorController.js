@@ -10,6 +10,7 @@ const changeAvailability = async (req,res) => {
         const {docId} = req.body 
 
         const docData = await doctorModel.findById(docId)
+        //Updates the available status of the doctor by toggling its current value.
         await doctorModel.findByIdAndUpdate(docId,{available: !docData.available })
         res.json({success:true, message: 'Availability Changed'})
 
@@ -124,4 +125,4 @@ const appointmentCancel = async (req, res) => {
         res.json({ success: false, message:error.message})   
     }
 }
-export {changeAvailability,doctorList, loginDoctor, appointmentsDoctor, appointmentCancel, appointmentCompleted}
+export { changeAvailability,doctorList, loginDoctor, appointmentsDoctor, appointmentCancel, appointmentCompleted }

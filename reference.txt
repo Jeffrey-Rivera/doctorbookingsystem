@@ -26,4 +26,9 @@ chatgpt
 file name: userController.js
 "Lets do this "Handle Errors from Cloudinary"
 
+Code Notes
+https://www.w3schools.com/js/js_errors.asp
+https://www.w3schools.com/js/js_async.asp
+https://www.w3schools.com/js/js_if_else.asp
+https://www.w3schools.com/js/js_object_definition.asp
 

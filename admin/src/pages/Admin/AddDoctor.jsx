@@ -32,7 +32,7 @@ const AddDoctor = () => {
       }
 
       const formData = new FormData()
-
+      //.append(): This method adds a new key/value pair to the FormData object.
       formData.append('image', docImg)
       formData.append('name', name)
       formData.append('email', email)
