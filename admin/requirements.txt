@@ -2,13 +2,15 @@
 npm create vite@latest
 - project name, framework = react, and variant = JavaScript
 
-
 npm install 
 npm install axios react-router-dom react-toastify
 npm install axios
 npm install react-toastify
 
-
-
 # CSS
 https://fonts.google.com/selection/embed
+
+
+# Doctor Login Credentials
+Email: Bob@gmail.com
+Password: 12345678
