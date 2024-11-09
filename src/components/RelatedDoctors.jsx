@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 
-const RelatedDoctors = ({speciality,docId}) => {
+const RelatedDoctors = ({ speciality, docId }) => {
 
     const { doctors } = useContext(AppContext)
     const navigate = useNavigate()
@@ -24,8 +24,8 @@ const RelatedDoctors = ({speciality,docId}) => {
                     <div onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0) }} className='border border-pink-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' key={index}>
                         <img className='bg-pink-50' src={item.image} alt="" />
                         <div className='p-4'>
-                            <div className='flex items-center gap-2 text-sm text-center text-green-400'>
-                                <p className='w-2 h-2 bg-green-500 rounded-full'></p><p>Available</p>
+                            <div className={`flex items-center gap-2 text-sm text-center ${item.available ? 'text-green-500' : 'text-gray-500'} `}>
+                                <p className={`w-2 h-2${item.available ? 'bg-green-500' : 'bg-gray-500'} bg-green-500 rounded-full`}></p><p>{item.available ? 'Available' : 'Not Available'}</p>
                             </div>
                             <p className='text-gray-700 text-lg font-medium'>{item.name}</p>
                             <p className='text-gray-500 text-sm'>{item.speciality}</p>
