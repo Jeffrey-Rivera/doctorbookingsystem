@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import stripePromise from '../utils/stripe'; 
+
+
+
 
 const MyAppointments = () => {
 
@@ -17,7 +20,7 @@ const MyAppointments = () => {
     return dateArray[0] + " " + months[Number(dateArray[1])] + " " + dateArray[2]
   }
 
-  const navigate = useNavigate()
+
 
   const getUserAppointments = async () => {
     try {
@@ -56,20 +59,46 @@ const MyAppointments = () => {
   }
 
   const appointmentStripe = async (appointmentId) => {
-    console.log('Attempting to make payment for appointment ID:', appointmentId);  // Add this line
+    console.log('Attempting to make payment for appointment ID:', appointmentId);
 
     try {
+        const { data } = await axios.post(`${backendUrl}/api/user/payment-stripe`, { appointmentId }, { headers: { token } });
+
+        if (data.success) {
+            console.log('PaymentIntent session ID:', data.sessionId); // Log the session ID
+            const stripe = await stripePromise;
+            const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+
+            if (result.error) {
+                console.error('Stripe redirect error:', result.error.message);
+            }
+        } else {
+            console.error('Payment failed:', data.message);
+        }
+    } catch (error) {
+        console.error('Error during payment:', error.message);
+    }
+};
+
+const handlePayment = async (appointmentId) => {
+  try {
+      const stripe = await stripePromise;
       const { data } = await axios.post(`${backendUrl}/api/user/payment-stripe`, { appointmentId }, { headers: { token } });
 
       if (data.success) {
-        console.log('PaymentIntent:', data.paymentIntent);
+          console.log('Redirecting to Stripe Checkout with session ID:', data.sessionId);
+          await stripe.redirectToCheckout({ sessionId: data.sessionId });
       } else {
-        console.log('Payment failed:', data.message);
+          console.error('Payment failed:', data.message);
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Error during payment:', error.message);
-    }
-  };
+  }
+};
+
+
+
+
 
 
   useEffect(() => {
