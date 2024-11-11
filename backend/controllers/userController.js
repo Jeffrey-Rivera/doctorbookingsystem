@@ -275,8 +275,6 @@ const stripeInstance = stripe(process.env.STRIPE_KEY_SECRET);
 // API to make payment of appointment using Stripe
 const paymentStripe = async (req, res) => {
     try {
-        console.log('Received appointmentId:', req.body.appointmentId); // Add this line
-        
         const { appointmentId } = req.body;
         const appointmentData = await appointmentModel.findById(appointmentId);
 
@@ -284,24 +282,33 @@ const paymentStripe = async (req, res) => {
             return res.json({ success: false, message: 'Appointment Cancelled or not found' });
         }
 
-        const userEmail = appointmentData.userData?.email;
-        if (!validator.isEmail(userEmail)) {
-            return res.status(400).json({ success: false, message: 'Invalid user email address' });
-        }
-
-        const paymentIntent = await stripeInstance.paymentIntents.create({
-            amount: appointmentData.amount * 100, // Amount in cents
-            currency: 'CAD',
-            receipt_email: userEmail,
+        // Create a Checkout Session
+        const session = await stripeInstance.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'cad',
+                        product_data: {
+                            name: `Appointment with Dr. ${appointmentData.docData.name}`,
+                        },
+                        unit_amount: appointmentData.amount * 100, // Amount in cents
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            success_url: `${process.env.FRONTEND_URL}/success`,
+            cancel_url: `${process.env.FRONTEND_URL}/cancel`,
         });
 
-        console.log('PaymentIntent created:', paymentIntent); // Add this line
-        res.json({ success: true, paymentIntent });
+        res.json({ success: true, sessionId: session.id });
     } catch (error) {
-        console.log('Error in paymentStripe API:', error); // Add this line
+        console.log('Error in paymentStripe API:', error);
         res.json({ success: false, message: error.message });
     }
 };
+
 
 
 

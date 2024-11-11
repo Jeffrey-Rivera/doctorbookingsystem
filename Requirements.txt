@@ -1,5 +1,6 @@
 Requirements:
-
+npm install @stripe/react-stripe-js @stripe/stripe-js
+npm install @stripe/stripe-js
 
 Dependencies:
 npm install
