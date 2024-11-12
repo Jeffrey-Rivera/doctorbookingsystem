@@ -26,6 +26,10 @@ chatgpt
 file name: userController.js
 "Lets do this "Handle Errors from Cloudinary"
 
+chatgpt 
+file Names: userController.js, MyAppointment, and stripe.jsx
+"Help me setup stripe when I click pay online"
+
 Code Notes
 https://www.w3schools.com/js/js_errors.asp
 https://www.w3schools.com/js/js_async.asp
