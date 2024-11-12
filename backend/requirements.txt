@@ -14,3 +14,7 @@ https://onlinetexttools.com/json-stringify-text
 
 # For resume
 npm install multer
+
+#Requirements:
+npm install @stripe/react-stripe-js @stripe/stripe-js
+npm install @stripe/stripe-js

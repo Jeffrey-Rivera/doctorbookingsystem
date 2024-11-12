@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { assets } from '../assets/assets'
+import axios from 'axios';
 
 const Careers = () => {
     const [selectedJob, setSelectedJob] = useState(null);
@@ -11,16 +12,31 @@ const Careers = () => {
         document.getElementById(`resume-upload-${jobTitle}`).click(); // Trigger the file input click
     };
 
-    const handleFileUpload = (event, jobTitle) => {
+    const handleFileUpload = async (event, jobTitle) => {
         const file = event.target.files[0];
         if (file) {
             if (file.type === 'application/pdf') {
-                toast.success("PDF successfully submitted!");
+                const formData = new FormData();
+                formData.append('resume', file);  // Attach the file
+                formData.append('jobTitle', jobTitle);  // Add the job title
+
+                try {
+                    const response = await axios.post('/api/resumes/upload', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    toast.success(response.data.message || "PDF successfully submitted!");
+                } catch (error) {
+                    console.error("Upload error:", error);
+                    toast.error(error.response?.data?.message || "Failed to upload PDF.");
+                }
             } else {
                 toast.error("Please upload a PDF file.");
             }
         }
     };
+
 
     return (
         <div>
