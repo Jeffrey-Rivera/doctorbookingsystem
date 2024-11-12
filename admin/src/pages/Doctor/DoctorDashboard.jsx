@@ -5,6 +5,9 @@ import appointmentsIcon from '../../assets/appointments_icon.svg'
 import patientsIcon from '../../assets/patients_icon.svg'
 import listIcon from '../../assets/list_icon.svg'
 import { AppContext } from '../../context/AppContext'
+import cancelIcon from '../../assets/cancel_icon.svg';
+import tickIcon from '../../assets/tick_icon.svg';
+
 
 const DoctorDashboard = () => {
 
@@ -67,8 +70,9 @@ const DoctorDashboard = () => {
                     : item.isCompleted
                       ? <p className='text-green-500 text-xs font-medium'>Completed</p>
                       : <div className='flex'>
-                        <img onClick={() => cancelAppointment(item._id)} className='w-10 cursor-pointer' src={assets.cancel_icon} alt="" />
-                        <img onClick={() => completeAppointment(item._id)} className='w-10 cursor-pointer' src={assets.tick_icon} alt="" />
+                        <img onClick={() => cancelAppointment(item._id)} className='w-10 cursor-pointer' src={cancelIcon} alt="" />
+                        <img onClick={() => completeAppointment(item._id)} className='w-10 cursor-pointer' src={tickIcon} alt="" />
+
                       </div>
                 }
               </div>

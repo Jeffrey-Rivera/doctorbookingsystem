@@ -16,10 +16,10 @@ const DoctorContextProvider = (props) => {
     const getAppointments = async () => {
         try {
 
-            const { data } = await axios.get(backendUrl + '/api/doctor/appointments', { headers: { token: dToken } })
+            const { data } = await axios.get(backendUrl + '/api/doctor/appointments', { headers: {dToken } })
             if (data.success) {
-                setAppointments(data.appointments.reverse())
-                console.log(data.appointments.reverse())
+                setAppointments(data.appointments)
+                console.log(data.appointments)
             } else {
                 toast.error(data.message)
             }
@@ -86,7 +86,7 @@ const DoctorContextProvider = (props) => {
     const getProfileData = async () => {
         try {
 
-            const { data } = await axios.get(backendUrl + 'api/doctor/profile', { header: { dToken } })
+            const { data } = await axios.get(backendUrl + '/api/doctor/profile', { headers: { dToken } })
             if (data.success) {
                 setProfileData(data.profileData)
                 console.log(data.profileData)

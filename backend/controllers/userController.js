@@ -298,8 +298,11 @@ const paymentStripe = async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: `${process.env.FRONTEND_URL}/success`,
+            success_url: `${process.env.FRONTEND_URL}/my-appointments?session_id={CHECKOUT_SESSION_ID}`, // Include session_id in URL
             cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+            metadata: {
+                appointmentId: appointmentId.toString(), // Pass the appointment ID as metadata
+            },
         });
 
         res.json({ success: true, sessionId: session.id });
@@ -307,9 +310,33 @@ const paymentStripe = async (req, res) => {
         console.log('Error in paymentStripe API:', error);
         res.json({ success: false, message: error.message });
     }
+}
+
+const verifyStripe = async (req, res) => {
+    const { sessionId } = req.body;
+
+    try {
+        // Retrieve the session from Stripe
+        const session = await stripeInstance.checkout.sessions.retrieve(sessionId);
+
+        // Check if payment was successful
+        if (session.payment_status === 'paid') {
+            const appointmentId = session.metadata.appointmentId;
+
+            // Update the appointment's payment status in MongoDB
+            await appointmentModel.findByIdAndUpdate(appointmentId, { payment: true });
+            res.json({ success: true, message: 'Payment verified and updated in database' });
+        } else {
+            res.json({ success: false, message: 'Payment not successful' });
+        }
+    } catch (error) {
+        console.error('Error verifying payment:', error);
+        res.status(500).json({ success: false, message: 'Error verifying payment' });
+    }
 };
 
 
 
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentStripe };
+
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentStripe, verifyStripe };
