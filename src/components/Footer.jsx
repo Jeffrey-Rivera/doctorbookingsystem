@@ -5,10 +5,17 @@ const Footer = () => {
     return (
         <div className='md:mx-10'>
             <div className='flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm'>
-                {/* ---Left side--- */}
-                <div>
-                    <img className='mb-5 w-24' src={assets.logo} alt="" />
-                    <p className='w-full md:w-2/3 text-gray-500 leading-6'>Welcome to our clinic...</p>
+                {/* ---Left side with logo and paragraph--- */}
+                <div className='flex items-start gap-4'>
+                    <img className='w-24' src={assets.logo} alt="Doctor Booking Logo" />
+                    <div>
+                        <p className='text-gray-500 leading-6 text-justify'>
+                            Welcome to <b>Doctor Booking</b> – the innovative platform that connects patients with healthcare professionals through modern technology, making it easier to schedule appointments anytime, anywhere.
+                        </p>
+                        <p className='text-gray-500 leading-6 text-justify mt-4'>
+                            We aim to streamline healthcare services by providing a seamless experience for users, eliminating long wait times, and enabling quick access to trusted doctors and specialists.
+                        </p>
+                    </div>
                 </div>
 
                 {/* ---Center side--- */}
@@ -33,7 +40,6 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* ---Right side--- */}
             <div>
                 <hr />
                 <p className='py-5 text-sm text-center'>Copyright 2024@ DoctorBooking - All Right Reserved.</p>
