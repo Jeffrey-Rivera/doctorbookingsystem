@@ -1,15 +1,70 @@
+/* Swiper CSS import - must be at the very top */
+@import "swiper/swiper-bundle.css";
+
+/* Google font import */
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+/* Tailwind base and utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom global styles */
 * {
   font-family: Outfit;
 }
+
 .active hr {
   @apply block;
 }
 
+/* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  @apply hidden;
+  width: 8px; /* Adjust width as needed */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light background for the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Darker color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded edges for smoother look */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker on hover for visual feedback */
+}
+
+/* Swiper Pagination Customization */
+.swiper-pagination-bullet {
+  background-color: #888; /* Inactive dot color */
+  opacity: 0.5; /* Full visibility */
+  width: 6px; /* Adjust dot size */
+  height: 6px; /* Adjust dot size */
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #f1f1f1; /* Active dot color */
+  width: 10px; /* Larger active dot */
+  height: 10px; /* Larger active dot */
+}
+
+.swiper-pagination-bullet:hover {
+  background-color: #555; /* Dot color on hover */
+}
+
+/* Custom Navigation Arrows for Swiper */
+.swiper-button-prev,
+.swiper-button-next {
+  color: white; /* Default arrow color */
+  font-size: 24px; /* Adjust size for visibility */
+  opacity: 0.7; /* Slight transparency for a softer look */
+  transition: opacity 0.3s, transform 0.3s; /* Smooth hover effect */
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  opacity: 1; /* Fully opaque on hover */
+  transform: scale(1.1); /* Slightly larger on hover for feedback */
 }

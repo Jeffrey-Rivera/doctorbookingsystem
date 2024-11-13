@@ -5,9 +5,10 @@ npm install @stripe/stripe-js
 Dependencies:
 npm install
 npm install axios react-router-dom react-toastify
+npm install swiper@latest
+npm install @fortawesome/fontawesome-free
 
-
-tailwindcss.com
+Tailwindcss.com
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 
