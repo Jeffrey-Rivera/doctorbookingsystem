@@ -5,7 +5,6 @@ import { assets } from '../assets/assets'
 const About = () => {
   return (
     <div>
-
       <div className='text-center text-2xl pt-10 text-gray-500'>
         <p>ABOUT <span className='text-gray-700 font-medium'>US</span></p>
       </div>
@@ -47,11 +46,15 @@ const About = () => {
         <div className='border px-6 md:px-12 py-6 sm:py-6 flex flex-col gap-5 text-[14px] hover:bg-pink-200 hover:text-white transition-all duration-300 text-gray-500 cursor-pointer'>
           <b>Community</b>
           <p className='text-justify'>We are committed to building a strong, supportive community for patients and healthcare professionals. By creating an ecosystem that fosters trust and collaboration, we ensure the best possible healthcare experience for everyone.</p>
-          {/* <Link to='/doctors'>
-            <button className='mt-4 px-4 py-2 bg-pink-300 text-white rounded hover:bg-pink-400 transition-all'>Visit Our Community</button></Link> */}
+
+          {/* Anchor link to navigate to the main page */}
+          <a href="/">
+            <button className='mt-4 px-4 py-2 bg-pink-300 text-white rounded hover:bg-pink-400 transition-all'>
+              Join Our Community
+            </button>
+          </a>
         </div>
       </div>
-
     </div>
   )
 }

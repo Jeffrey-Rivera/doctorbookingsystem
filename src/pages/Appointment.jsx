@@ -5,7 +5,7 @@ import { assets } from '../assets/assets';
 import RelatedDoctors from '../components/RelatedDoctors';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { format } from 'date-fns'; 
+import { format } from 'date-fns';
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -161,7 +161,7 @@ const Appointment = () => {
       {/* ---Booking Slots--- */}
       <div className='sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-500'>
         <p>Booking slots</p>
-        <div className='flex gap-3 items-center w-full overflow-x-scroll mt-4'>
+        <div className='flex gap-3 items-center w-full mt-4'>
           {
             docSlots.length && docSlots.map((item, index) => (
               <div onClick={() => setSlotIndex(index)} className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index ? 'bg-primary text-white' : 'border border-gray-400'} `} key={index}>
