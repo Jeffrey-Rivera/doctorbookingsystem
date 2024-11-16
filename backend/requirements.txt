@@ -18,3 +18,11 @@ npm install multer
 #Requirements:
 npm install @stripe/react-stripe-js @stripe/stripe-js
 npm install @stripe/stripe-js
+
+#Payment
+Card Details
+Email: dummy@gmail.com
+Card information: 4242 4242 4242 4242
+12/30 000
+Bob
+T3M 2C8
