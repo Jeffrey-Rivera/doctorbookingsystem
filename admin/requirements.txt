@@ -13,5 +13,5 @@ https://fonts.google.com/selection/embed
 
 
 # Doctor Login Credentials
-Email: Bob@gmail.com
+Email: bob@gmail.com
 Password: 12345678
