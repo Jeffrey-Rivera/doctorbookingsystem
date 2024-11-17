@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const AdminCareers = () => {
-    const [resumes, setResumes] = useState([]);
+    const [resumes, setResumes] = useState([]); // Initialize resumes as an empty array
 
     useEffect(() => {
         const fetchResumes = async () => {
             try {
-                const response = await axios.get('/api/resumes/all');
+                const response = await axios.get('http://localhost:4000/api/resumes/all'); // Explicit backend URL
                 console.log("Fetched resumes:", response.data);
-                setResumes(response.data);
+        
+                if (Array.isArray(response.data)) {
+                    setResumes(response.data);
+                } else {
+                    console.error("Unexpected API response format:", response.data);
+                    setResumes([]);
+                }
             } catch (error) {
                 console.error("Failed to fetch resumes", error);
+                setResumes([]);
             }
         };
+        
         fetchResumes();
     }, []);
 
@@ -31,7 +39,7 @@ const AdminCareers = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {resumes.length > 0 ? (
+                    {Array.isArray(resumes) && resumes.length > 0 ? (
                         resumes.map((resume) => (
                             <tr key={resume._id}>
                                 <td className="border p-2">{resume.jobTitle}</td>

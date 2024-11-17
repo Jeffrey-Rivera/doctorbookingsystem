@@ -17,18 +17,20 @@ const Careers = () => {
         if (file) {
             if (file.type === 'application/pdf') {
                 const formData = new FormData();
-                formData.append('resume', file);  // Attach the file
-                formData.append('jobTitle', jobTitle);  // Add the job title
-
+                formData.append('resume', file); // Attach the file
+                formData.append('jobTitle', jobTitle); // Add the job title
+    
                 try {
-                    const response = await axios.post('/api/resumes/upload', formData, {
+                    console.log("Uploading file to /api/resumes/upload...");
+                    const response = await axios.post('http://localhost:4000/api/resumes/upload', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
+                    console.log("Upload successful:", response.data);
                     toast.success(response.data.message || "PDF successfully submitted!");
                 } catch (error) {
-                    console.error("Upload error:", error);
+                    console.error("Upload error details:", error.response || error);
                     toast.error(error.response?.data?.message || "Failed to upload PDF.");
                 }
             } else {
@@ -36,6 +38,8 @@ const Careers = () => {
             }
         }
     };
+    
+    
 
 
     return (

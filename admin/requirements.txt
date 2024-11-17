@@ -6,6 +6,7 @@ npm install
 npm install axios react-router-dom react-toastify
 npm install axios
 npm install react-toastify
+npm install @fortawesome/fontawesome-free
 
 # CSS
 https://fonts.google.com/selection/embed
