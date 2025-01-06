@@ -15,3 +15,7 @@ https://fonts.google.com/selection/embed
 # Doctor Login Credentials
 Email: bob@gmail.com
 Password: 12345678
+
+# User Login Credentials
+Email: billy.clerk23@gmail.com
+Password: 12345678

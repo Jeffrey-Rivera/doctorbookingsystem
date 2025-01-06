@@ -15,7 +15,7 @@ const Contact = () => {
 
         <div className='flex flex-col justify-center items-start gap-6'>
           <p className='font-semibold text-lg text-gray-600'>Office</p>
-          <p className='text-gray-500'>69 Auburn Meadows View <br /> SouthEast, Calgary, Alberta, Canada T3M 2C8</p>
+          <p className='text-gray-500'>4448 Front St SouthEast, <br /> Calgary, Alberta, Canada T3M 1M4</p>
           <p className='text-gray-500'>Tel: (587) 1234567 <br /> Email: doctorbooking@gmail.com </p>
           <p className='font-semibold text-lg text-gray-600'>Careers at Doctor Booking</p>
           <p className='text-gray-500'>Be one of our elite and TOP DOCTORS...</p>
