@@ -270,7 +270,7 @@ const cancelAppointment = async (req, res) => {
     }
 }
 
-const stripeInstance = stripe(process.env.STRIPE_KEY_SECRET);
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 // API to make payment of appointment using Stripe
 const paymentStripe = async (req, res) => {
