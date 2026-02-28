@@ -50,4 +50,8 @@ app.use('/api/resumes', resumeRouter);
 
 app.get('/', (req, res) => res.send('API WORKING'));
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.listen(port, () => console.log('Server Started on port', port));
