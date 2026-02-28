@@ -36,7 +36,6 @@ pipeline {
     stage("Compute Semantic Version") {
       steps {
         script {
-          // Find latest tag like v1.2.3 (if none, start at v0.1.0)
           def nextVer = sh(
             returnStdout: true,
             script: '''
@@ -123,12 +122,27 @@ pipeline {
     stage("Create Git Tag (optional)") {
       when { expression { return params.CREATE_GIT_TAG } }
       steps {
-        script {
-          sh """
+        withCredentials([usernamePassword(
+          credentialsId: 'github-credentials-PAT',
+          usernameVariable: 'GIT_USER',
+          passwordVariable: 'GIT_PAT'
+        )]) {
+          sh '''
             set -e
-            git tag v${IMAGE_TAG} || true
-            git push origin v${IMAGE_TAG} || true
-          """
+            git config user.email "jenkins@local"
+            git config user.name  "jenkins"
+
+            # make sure remote is the same repo but authenticated for push
+            git remote set-url origin https://${GIT_USER}:${GIT_PAT}@github.com/Jeffrey-Rivera/doctorbookingsystem.git
+
+            # create tag only if it doesn't exist
+            if git rev-parse "v${IMAGE_TAG}" >/dev/null 2>&1; then
+              echo "Tag v${IMAGE_TAG} already exists, skipping"
+            else
+              git tag "v${IMAGE_TAG}"
+              git push origin "v${IMAGE_TAG}"
+            fi
+          '''
         }
       }
     }
@@ -141,94 +155,71 @@ pipeline {
             usernameVariable: 'AWS_ACCESS_KEY_ID',
             passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
-            sh '''
+            sh """
               set -e
-              ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} "
+              ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} 'bash -lc "
                 set -e
-
-                aws ecr get-login-password --region ${AWS_REGION} \
-                  | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
                 cd ${EC2_APP_DIR}
 
-                # Ensure .env exists
-                if [ ! -f .env ]; then touch .env; fi
+                # ensure .env exists
+                [ -f .env ] || touch .env
 
-                # --- Save previous tags for rollback ---
-                PREV_BACKEND_TAG=\$(grep -E '^BACKEND_TAG=' .env | cut -d= -f2 || true)
-                PREV_FRONTEND_TAG=\$(grep -E '^FRONTEND_TAG=' .env | cut -d= -f2 || true)
-                PREV_ADMIN_TAG=\$(grep -E '^ADMIN_TAG=' .env | cut -d= -f2 || true)
+                # capture CURRENT tags for rollback
+                OLD_BACKEND=\\\$(grep -E '^BACKEND_TAG=' .env | cut -d= -f2 || true)
+                OLD_FRONTEND=\\\$(grep -E '^FRONTEND_TAG=' .env | cut -d= -f2 || true)
+                OLD_ADMIN=\\\$(grep -E '^ADMIN_TAG=' .env | cut -d= -f2 || true)
 
-                echo '--- Previous deploy tags ---'
-                echo BACKEND_TAG=\$PREV_BACKEND_TAG
-                echo FRONTEND_TAG=\$PREV_FRONTEND_TAG
-                echo ADMIN_TAG=\$PREV_ADMIN_TAG
+                echo \\\"Old tags: backend=\\\$OLD_BACKEND frontend=\\\$OLD_FRONTEND admin=\\\$OLD_ADMIN\\\"
 
-                rollback() {
-                  echo '❌ Deploy failed. Rolling back...'
-                  # Restore old tags (only if they existed)
-                  if [ -n \"\$PREV_BACKEND_TAG\" ]; then
-                    sed -i 's/^BACKEND_TAG=.*/BACKEND_TAG='\$PREV_BACKEND_TAG'/' .env || echo BACKEND_TAG=\$PREV_BACKEND_TAG >> .env
-                  fi
-                  if [ -n \"\$PREV_FRONTEND_TAG\" ]; then
-                    sed -i 's/^FRONTEND_TAG=.*/FRONTEND_TAG='\$PREV_FRONTEND_TAG'/' .env || echo FRONTEND_TAG=\$PREV_FRONTEND_TAG >> .env
-                  fi
-                  if [ -n \"\$PREV_ADMIN_TAG\" ]; then
-                    sed -i 's/^ADMIN_TAG=.*/ADMIN_TAG='\$PREV_ADMIN_TAG'/' .env || echo ADMIN_TAG=\$PREV_ADMIN_TAG >> .env
-                  fi
+                # login to ECR
+                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
-                  echo '--- Rolled back tags ---'
-                  cat .env
+                # write NEW tags
+                sed -i \\\"s/^BACKEND_TAG=.*/BACKEND_TAG=${IMAGE_TAG}/\\\" .env || echo BACKEND_TAG=${IMAGE_TAG} >> .env
+                sed -i \\\"s/^FRONTEND_TAG=.*/FRONTEND_TAG=${IMAGE_TAG}/\\\" .env || echo FRONTEND_TAG=${IMAGE_TAG} >> .env
+                sed -i \\\"s/^ADMIN_TAG=.*/ADMIN_TAG=${IMAGE_TAG}/\\\" .env || echo ADMIN_TAG=${IMAGE_TAG} >> .env
 
-                  docker compose pull
-                  docker compose up -d --remove-orphans
-
-                  docker ps --format 'table {{.Names}}\\t{{.Image}}\\t{{.Status}}'
-                  exit 1
-                }
-
-                # If anything fails after this point, rollback
-                trap rollback ERR
-
-                # --- Update tags to new version ---
-                sed -i 's/^BACKEND_TAG=.*/BACKEND_TAG=${IMAGE_TAG}/' .env || echo BACKEND_TAG=${IMAGE_TAG} >> .env
-                sed -i 's/^FRONTEND_TAG=.*/FRONTEND_TAG=${IMAGE_TAG}/' .env || echo FRONTEND_TAG=${IMAGE_TAG} >> .env
-                sed -i 's/^ADMIN_TAG=.*/ADMIN_TAG=${IMAGE_TAG}/' .env || echo ADMIN_TAG=${IMAGE_TAG} >> .env
-
-                echo '--- Current deploy tags ---'
+                echo \\\"--- Deploying tags ---\\\"
                 cat .env
 
                 docker compose pull
                 docker compose up -d --remove-orphans
 
-                # --- Health checks with retries ---
-                check_url() {
-                  URL=\$1
-                  NAME=\$2
-                  echo \"Checking \$NAME -> \$URL\"
-                  for i in \$(seq 1 10); do
-                    if curl -fsS --max-time 5 \"\$URL\" >/dev/null; then
-                      echo \"✅ \$NAME healthy\"
-                      return 0
-                    fi
-                    echo \"...retry \$i/10\"
-                    sleep 3
-                  done
-                  echo \"❌ \$NAME failed health check\"
-                  return 1
-                }
+                # healthcheck (retry)
+                echo \\\"--- Healthcheck ---\\\"
+                ok=0
+                for i in \\\$(seq 1 12); do
+                  # backend health (change path if you have /health)
+                  if curl -fsS --max-time 5 http://localhost:4000/ >/dev/null; then
+                    ok=1
+                    break
+                  fi
+                  echo \\\"Retry \\\$i/12...\\\"
+                  sleep 5
+                done
 
-                check_url http://localhost:4000/ backend
-                check_url http://localhost:81/ frontend
-                check_url http://localhost:82/ admin
+                if [ \\\"\\\$ok\\\" -ne 1 ]; then
+                  echo \\\"❌ Healthcheck failed. Rolling back...\\\"
 
-                # If we reach here, health checks passed → disable trap rollback
-                trap - ERR
+                  # restore old tags (if empty, keep current file line as-is)
+                  [ -n \\\"\\\$OLD_BACKEND\\\" ] && sed -i \\\"s/^BACKEND_TAG=.*/BACKEND_TAG=\\\$OLD_BACKEND/\\\" .env
+                  [ -n \\\"\\\$OLD_FRONTEND\\\" ] && sed -i \\\"s/^FRONTEND_TAG=.*/FRONTEND_TAG=\\\$OLD_FRONTEND/\\\" .env
+                  [ -n \\\"\\\$OLD_ADMIN\\\" ] && sed -i \\\"s/^ADMIN_TAG=.*/ADMIN_TAG=\\\$OLD_ADMIN/\\\" .env
 
-                echo '✅ Deploy + health checks SUCCESS'
-                docker ps --format 'table {{.Names}}\\t{{.Image}}\\t{{.Status}}'
-              "
-            '''
+                  echo \\\"--- Rolled back tags ---\\\"
+                  cat .env
+
+                  docker compose pull
+                  docker compose up -d --remove-orphans
+
+                  exit 1
+                fi
+
+                echo \\\"✅ Healthcheck passed. Deploy success.\\\"
+                docker ps --format \\\"table {{.Names}}\\\\t{{.Image}}\\\\t{{.Status}}\\\"
+              "'
+            """
           }
         }
       }
