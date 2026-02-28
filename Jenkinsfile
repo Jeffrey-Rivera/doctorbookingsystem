@@ -41,7 +41,7 @@ pipeline {
         sh '''
           set -e
           docker build -t doctor-backend:${IMAGE_TAG} backend
-          docker build -t doctor-frontend:${IMAGE_TAG} .
+          docker build --build-arg VITE_BACKEND_URL=http://${EC2_HOST}:4000 -t doctor-frontend:${IMAGE_TAG} .
           docker build -t doctor-admin:${IMAGE_TAG} admin
         '''
       }
