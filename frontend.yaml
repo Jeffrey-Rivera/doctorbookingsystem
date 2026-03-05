@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctor-frontend
+  namespace: doctor
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: doctor-frontend
+  template:
+    metadata:
+      labels:
+        app: doctor-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 730335227222.dkr.ecr.ca-central-1.amazonaws.com/doctor-frontend:0.1.4
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: doctor-frontend-svc
+  namespace: doctor
+spec:
+  selector:
+    app: doctor-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP

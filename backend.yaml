@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctor-backend
+  namespace: doctor
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: doctor-backend
+  template:
+    metadata:
+      labels:
+        app: doctor-backend
+    spec:
+      containers:
+        - name: backend
+          image: 730335227222.dkr.ecr.ca-central-1.amazonaws.com/doctor-backend:0.1.3
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - configMapRef:
+                name: backend-config
+            - secretRef:
+                name: backend-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 25
+            periodSeconds: 20
+            timeoutSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: doctor-backend-svc
+  namespace: doctor
+spec:
+  selector:
+    app: doctor-backend
+  ports:
+    - port: 4000
+      targetPort: 4000
+  type: ClusterIP
