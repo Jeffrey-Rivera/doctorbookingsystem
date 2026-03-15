@@ -21,6 +21,8 @@ const allowedOrigins = [
   "http://16.52.37.174:82",
   "http://localhost:5173",
   "http://localhost:5174",
+  "http://localhost:3000",
+  "http://a425d4af3e6bb407085d10a570db028d-1224120716.ca-central-1.elb.amazonaws.com"
 ];
 
 app.use(cors({
@@ -51,6 +53,10 @@ app.use('/api/resumes', resumeRouter);
 app.get('/', (req, res) => res.send('API WORKING'));
 
 app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 

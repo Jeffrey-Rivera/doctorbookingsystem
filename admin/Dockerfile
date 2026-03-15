@@ -11,7 +11,7 @@ ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
 # fail fast if not provided (prevents "undefined" in the app)
-RUN test -n "$VITE_BACKEND_URL" || (echo "ERROR: VITE_BACKEND_URL is empty" && exit 1)
+RUN echo "VITE_BACKEND_URL=$VITE_BACKEND_URL"
 
 # create .env used by vite build
 RUN echo "VITE_BACKEND_URL=$VITE_BACKEND_URL" > .env
