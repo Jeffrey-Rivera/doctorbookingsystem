@@ -22,11 +22,15 @@ pipeline {
     ECR_BACKEND  = "${ECR_REGISTRY}/doctor-backend"
     ECR_FRONTEND = "${ECR_REGISTRY}/doctor-frontend"
     ECR_ADMIN    = "${ECR_REGISTRY}/doctor-admin"
+
+    EKS_CLUSTER_NAME = "doctor-eks"
   }
 
   stages {
     stage("Checkout") {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
     stage("Compute Semantic Version") {
@@ -99,7 +103,7 @@ pipeline {
       }
     }
 
-    stage("Tag & Push to ECR (semver)") {
+    stage("Tag & Push to ECR") {
       steps {
         sh '''
           set -e
@@ -116,7 +120,9 @@ pipeline {
     }
 
     stage("Create Git Tag (optional)") {
-      when { expression { return params.CREATE_GIT_TAG } }
+      when {
+        expression { return params.CREATE_GIT_TAG }
+      }
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'github-credentials-PAT',
@@ -126,7 +132,7 @@ pipeline {
           sh '''
             set -e
             git config user.email "jenkins@local"
-            git config user.name  "jenkins"
+            git config user.name "jenkins"
 
             git remote set-url origin https://${GIT_USER}:${GIT_PAT}@github.com/Jeffrey-Rivera/doctorbookingsystem.git
 
@@ -143,22 +149,34 @@ pipeline {
 
     stage("Deploy to EKS") {
       steps {
-        sh '''
-          set -e
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-ecr-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh '''
+            set -e
 
-          kubectl -n doctor set image deployment/doctor-backend backend=${ECR_BACKEND}:${IMAGE_TAG}
-          kubectl -n doctor set image deployment/doctor-frontend frontend=${ECR_FRONTEND}:${IMAGE_TAG}
-          kubectl -n doctor set image deployment/doctor-admin admin=${ECR_ADMIN}:${IMAGE_TAG}
+            mkdir -p ~/.kube
 
-          kubectl -n doctor rollout status deployment/doctor-backend --timeout=180s
-          kubectl -n doctor rollout status deployment/doctor-frontend --timeout=180s
-          kubectl -n doctor rollout status deployment/doctor-admin --timeout=180s
+            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}
 
-          echo "✅ EKS rollout successful"
-          kubectl -n doctor get pods
-          kubectl -n doctor get deployment
-          kubectl -n doctor get ingress
-        '''
+            kubectl get nodes
+
+            kubectl -n doctor set image deployment/doctor-backend backend=${ECR_BACKEND}:${IMAGE_TAG}
+            kubectl -n doctor set image deployment/doctor-frontend frontend=${ECR_FRONTEND}:${IMAGE_TAG}
+            kubectl -n doctor set image deployment/doctor-admin admin=${ECR_ADMIN}:${IMAGE_TAG}
+
+            kubectl -n doctor rollout status deployment/doctor-backend --timeout=180s
+            kubectl -n doctor rollout status deployment/doctor-frontend --timeout=180s
+            kubectl -n doctor rollout status deployment/doctor-admin --timeout=180s
+
+            echo "✅ EKS rollout successful"
+            kubectl -n doctor get pods
+            kubectl -n doctor get deployment
+            kubectl -n doctor get ingress
+          '''
+        }
       }
     }
   }
