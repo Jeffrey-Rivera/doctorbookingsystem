@@ -22,9 +22,6 @@ pipeline {
     ECR_BACKEND  = "${ECR_REGISTRY}/doctor-backend"
     ECR_FRONTEND = "${ECR_REGISTRY}/doctor-frontend"
     ECR_ADMIN    = "${ECR_REGISTRY}/doctor-admin"
-
-    EC2_HOST    = "16.52.37.174"
-    EC2_APP_DIR = "/home/ubuntu"
   }
 
   stages {
@@ -32,7 +29,6 @@ pipeline {
       steps { checkout scm }
     }
 
-    // ✅ 1) SEMVER AUTO TAGGING
     stage("Compute Semantic Version") {
       steps {
         script {
@@ -41,7 +37,6 @@ pipeline {
             script: '''
               set -e
 
-              # Make sure tags are available
               git fetch --tags --force >/dev/null 2>&1 || true
 
               LAST_TAG=$(git tag -l "v[0-9]*.[0-9]*.[0-9]*" --sort=-v:refname | head -n 1)
@@ -79,9 +74,11 @@ pipeline {
 
     stage("Login to ECR") {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-ecr-creds',
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-ecr-creds',
           usernameVariable: 'AWS_ACCESS_KEY_ID',
-          passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
           sh '''
             set -e
             aws ecr get-login-password --region ${AWS_REGION} \
@@ -96,8 +93,8 @@ pipeline {
         sh '''
           set -e
           docker build -t doctor-backend:${IMAGE_TAG} backend
-          docker build --build-arg VITE_BACKEND_URL=http://${EC2_HOST}:4000 -t doctor-frontend:${IMAGE_TAG} .
-          docker build --build-arg VITE_BACKEND_URL=http://${EC2_HOST}:4000 -t doctor-admin:${IMAGE_TAG} admin
+          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-frontend:${IMAGE_TAG} .
+          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-admin:${IMAGE_TAG} admin
         '''
       }
     }
@@ -118,7 +115,6 @@ pipeline {
       }
     }
 
-    // Optional but recommended: create a git tag so version history is real
     stage("Create Git Tag (optional)") {
       when { expression { return params.CREATE_GIT_TAG } }
       steps {
@@ -132,10 +128,8 @@ pipeline {
             git config user.email "jenkins@local"
             git config user.name  "jenkins"
 
-            # make sure remote is the same repo but authenticated for push
             git remote set-url origin https://${GIT_USER}:${GIT_PAT}@github.com/Jeffrey-Rivera/doctorbookingsystem.git
 
-            # create tag only if it doesn't exist
             if git rev-parse "v${IMAGE_TAG}" >/dev/null 2>&1; then
               echo "Tag v${IMAGE_TAG} already exists, skipping"
             else
@@ -147,81 +141,24 @@ pipeline {
       }
     }
 
-    // ✅ 2) HEALTH CHECKS + ✅ 3) ROLLBACK (built into deploy stage)
-    stage("Deploy on EC2 (update tags + restart + healthcheck + rollback)") {
+    stage("Deploy to EKS") {
       steps {
-        sshagent(credentials: ['ec2-ssh-key']) {
-          withCredentials([usernamePassword(credentialsId: 'aws-ecr-creds',
-            usernameVariable: 'AWS_ACCESS_KEY_ID',
-            passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        sh '''
+          set -e
 
-            sh """
-              set -e
-              ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} 'bash -lc "
-                set -e
+          kubectl -n doctor set image deployment/doctor-backend backend=${ECR_BACKEND}:${IMAGE_TAG}
+          kubectl -n doctor set image deployment/doctor-frontend frontend=${ECR_FRONTEND}:${IMAGE_TAG}
+          kubectl -n doctor set image deployment/doctor-admin admin=${ECR_ADMIN}:${IMAGE_TAG}
 
-                cd ${EC2_APP_DIR}
+          kubectl -n doctor rollout status deployment/doctor-backend --timeout=180s
+          kubectl -n doctor rollout status deployment/doctor-frontend --timeout=180s
+          kubectl -n doctor rollout status deployment/doctor-admin --timeout=180s
 
-                # ensure .env exists
-                [ -f .env ] || touch .env
-
-                # capture CURRENT tags for rollback
-                OLD_BACKEND=\\\$(grep -E '^BACKEND_TAG=' .env | cut -d= -f2 || true)
-                OLD_FRONTEND=\\\$(grep -E '^FRONTEND_TAG=' .env | cut -d= -f2 || true)
-                OLD_ADMIN=\\\$(grep -E '^ADMIN_TAG=' .env | cut -d= -f2 || true)
-
-                echo \\\"Old tags: backend=\\\$OLD_BACKEND frontend=\\\$OLD_FRONTEND admin=\\\$OLD_ADMIN\\\"
-
-                # login to ECR
-                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
-
-                # write NEW tags
-                sed -i \\\"s/^BACKEND_TAG=.*/BACKEND_TAG=${IMAGE_TAG}/\\\" .env || echo BACKEND_TAG=${IMAGE_TAG} >> .env
-                sed -i \\\"s/^FRONTEND_TAG=.*/FRONTEND_TAG=${IMAGE_TAG}/\\\" .env || echo FRONTEND_TAG=${IMAGE_TAG} >> .env
-                sed -i \\\"s/^ADMIN_TAG=.*/ADMIN_TAG=${IMAGE_TAG}/\\\" .env || echo ADMIN_TAG=${IMAGE_TAG} >> .env
-
-                echo \\\"--- Deploying tags ---\\\"
-                cat .env
-
-                docker compose pull
-                docker compose up -d --remove-orphans
-
-                # healthcheck (retry)
-                echo \\\"--- Healthcheck ---\\\"
-                ok=0
-                for i in \\\$(seq 1 12); do
-                  # backend health (change path if you have /health)
-                  if curl -fsS --max-time 5 http://localhost:4000/ >/dev/null; then
-                    ok=1
-                    break
-                  fi
-                  echo \\\"Retry \\\$i/12...\\\"
-                  sleep 5
-                done
-
-                if [ \\\"\\\$ok\\\" -ne 1 ]; then
-                  echo \\\"❌ Healthcheck failed. Rolling back...\\\"
-
-                  # restore old tags (if empty, keep current file line as-is)
-                  [ -n \\\"\\\$OLD_BACKEND\\\" ] && sed -i \\\"s/^BACKEND_TAG=.*/BACKEND_TAG=\\\$OLD_BACKEND/\\\" .env
-                  [ -n \\\"\\\$OLD_FRONTEND\\\" ] && sed -i \\\"s/^FRONTEND_TAG=.*/FRONTEND_TAG=\\\$OLD_FRONTEND/\\\" .env
-                  [ -n \\\"\\\$OLD_ADMIN\\\" ] && sed -i \\\"s/^ADMIN_TAG=.*/ADMIN_TAG=\\\$OLD_ADMIN/\\\" .env
-
-                  echo \\\"--- Rolled back tags ---\\\"
-                  cat .env
-
-                  docker compose pull
-                  docker compose up -d --remove-orphans
-
-                  exit 1
-                fi
-
-                echo \\\"✅ Healthcheck passed. Deploy success.\\\"
-                docker ps --format \\\"table {{.Names}}\\\\t{{.Image}}\\\\t{{.Status}}\\\"
-              "'
-            """
-          }
-        }
+          echo "✅ EKS rollout successful"
+          kubectl -n doctor get pods
+          kubectl -n doctor get deployment
+          kubectl -n doctor get ingress
+        '''
       }
     }
   }
