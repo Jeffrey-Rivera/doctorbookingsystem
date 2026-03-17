@@ -97,8 +97,8 @@ pipeline {
         sh '''
           set -e
           docker build -t doctor-backend:${IMAGE_TAG} backend
-          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-frontend:${IMAGE_TAG} .
-          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-admin:${IMAGE_TAG} admin
+          docker build --build-arg VITE_BACKEND_URL= -t doctor-frontend:${IMAGE_TAG} .
+          docker build --build-arg VITE_BACKEND_URL= -t doctor-admin:${IMAGE_TAG} admin
         '''
       }
     }
