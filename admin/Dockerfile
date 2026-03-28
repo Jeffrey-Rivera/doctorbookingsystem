@@ -10,7 +10,7 @@ COPY . .
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
-# fail fast if not provided (prevents "undefined" in the app)
+# print the build-time backend URL for debugging
 RUN echo "VITE_BACKEND_URL=$VITE_BACKEND_URL"
 
 # create .env used by vite build

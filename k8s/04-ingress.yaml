@@ -8,7 +8,6 @@ spec:
   rules:
     - http:
         paths:
-
           - path: /api
             pathType: Prefix
             backend:
@@ -16,7 +15,6 @@ spec:
                 name: doctor-backend-svc
                 port:
                   number: 4000
-
           - path: /
             pathType: Prefix
             backend:

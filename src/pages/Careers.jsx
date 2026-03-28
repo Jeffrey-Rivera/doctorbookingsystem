@@ -21,8 +21,8 @@ const Careers = () => {
                 formData.append('jobTitle', jobTitle); // Add the job title
     
                 try {
-                    console.log("Uploading file to /api/resumes/upload...");
-                    const response = await axios.post('http://localhost:4000/api/resumes/upload', formData, {
+                    console.log("Uploading file to /resumes/upload...");
+                    const response = await axios.post('/resumes/upload', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },

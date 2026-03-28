@@ -19,11 +19,11 @@ pipeline {
     AWS_ACCOUNT_ID = "730335227222"
     ECR_REGISTRY   = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-    ECR_BACKEND  = "${ECR_REGISTRY}/doctor-backend"
-    ECR_FRONTEND = "${ECR_REGISTRY}/doctor-frontend"
-    ECR_ADMIN    = "${ECR_REGISTRY}/doctor-admin"
+    ECR_BACKEND  = "${ECR_REGISTRY}/doctor-backend-tf"
+    ECR_FRONTEND = "${ECR_REGISTRY}/doctor-frontend-tf"
+    ECR_ADMIN    = "${ECR_REGISTRY}/doctor-admin-tf"
 
-    EKS_CLUSTER_NAME = "doctor-eks"
+    EKS_CLUSTER_NAME = "doctor-eks-tf"
   }
 
   stages {
@@ -97,8 +97,8 @@ pipeline {
         sh '''
           set -e
           docker build -t doctor-backend:${IMAGE_TAG} backend
-          docker build --build-arg VITE_BACKEND_URL= -t doctor-frontend:${IMAGE_TAG} .
-          docker build --build-arg VITE_BACKEND_URL= -t doctor-admin:${IMAGE_TAG} admin
+          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-frontend:${IMAGE_TAG} .
+          docker build --build-arg VITE_BACKEND_URL=/api -t doctor-admin:${IMAGE_TAG} admin
         '''
       }
     }
@@ -147,6 +147,23 @@ pipeline {
       }
     }
 
+    stage("Verify Cluster") {
+      steps {
+        withCredentials([usernamePassword(
+          credentialsId: 'aws-ecr-creds',
+          usernameVariable: 'AWS_ACCESS_KEY_ID',
+          passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+        )]) {
+          sh '''
+            set -e
+            mkdir -p ~/.kube
+            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}
+            kubectl get nodes
+          '''
+        }
+      }
+    }
+
     stage("Deploy to EKS") {
       steps {
         withCredentials([usernamePassword(
@@ -158,10 +175,7 @@ pipeline {
             set -e
 
             mkdir -p ~/.kube
-
             aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}
-
-            kubectl get nodes
 
             kubectl -n doctor set image deployment/doctor-backend backend=${ECR_BACKEND}:${IMAGE_TAG}
             kubectl -n doctor set image deployment/doctor-frontend frontend=${ECR_FRONTEND}:${IMAGE_TAG}

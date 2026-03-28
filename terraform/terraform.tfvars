@@ -1,0 +1,10 @@
+aws_region         = "ca-central-1"
+aws_profile        = "doctor-dev"
+project_name       = "doctor"
+environment        = "dev"
+cluster_name       = "doctor-eks-tf"
+node_instance_type = "t3.medium"
+node_desired_size  = 2
+node_min_size      = 2
+node_max_size      = 3
+vpc_cidr           = "10.0.0.0/16"

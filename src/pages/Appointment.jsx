@@ -100,7 +100,7 @@ const Appointment = () => {
       // Format the date for the email
       const formattedDate = format(date, 'EEEE, MMMM do, yyyy');
 
-      const { data } = await axios.post(backendUrl + '/api/user/book-appointment', { docId, slotDate, slotTime }, { headers: { token } });
+      const { data } = await axios.post(backendUrl + '/user/book-appointment', { docId, slotDate, slotTime }, { headers: { token } });
       if (data.success) {
         toast.success(`Appointment booked for ${formattedDate} at ${slotTime}`);
         getDoctorsData();

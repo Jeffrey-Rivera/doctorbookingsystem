@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: doctor
+data:
+  CURRENCY: "CAD"
+  FRONTEND_URL: "http://a28148278a20f4fb7becd7e35d4d1489-1229915734.ca-central-1.elb.amazonaws.com"
+  PORT: "4000"
+  ADMIN_EMAIL: "admin@booking.com"

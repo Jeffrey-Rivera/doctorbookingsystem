@@ -14,21 +14,25 @@ const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
-// ✅ Allow both frontend + admin origins
 const allowedOrigins = [
   "http://16.52.37.174",
   "http://16.52.37.174:81",
   "http://16.52.37.174:82",
   "http://localhost:5173",
   "http://localhost:5174",
-  "http://localhost:3000",
-  "http://a425d4af3e6bb407085d10a570db028d-1224120716.ca-central-1.elb.amazonaws.com"
+  "http://localhost:3000"
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+
+    const isAwsElb = origin.endsWith(".ca-central-1.elb.amazonaws.com");
+
+    if (allowedOrigins.includes(origin) || isAwsElb) {
+      return callback(null, true);
+    }
+
     return callback(new Error("Not allowed by CORS: " + origin));
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -36,7 +40,7 @@ app.use(cors({
     "Content-Type",
     "Authorization",
     "token",
-    "atoken"   // ✅ ADD THIS
+    "atoken"
   ],
   credentials: true,
 }));
