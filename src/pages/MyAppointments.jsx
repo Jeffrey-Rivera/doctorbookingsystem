@@ -21,7 +21,7 @@ const MyAppointments = () => {
         if (!token) return;
         try {
             console.log("Fetching user appointments...");
-            const { data } = await axios.get(`${backendUrl}/api/user/appointments`, { headers: { token } });
+            const { data } = await axios.get(`${backendUrl}/user/appointments`, { headers: { token } });
             if (data.success) {
                 setAppointments(data.appointments.reverse());
                 console.log("Appointments fetched:", data.appointments);
@@ -36,7 +36,7 @@ const MyAppointments = () => {
 
     const cancelAppointment = async (appointmentId) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/user/cancel-appointment`, { appointmentId }, { headers: { token } });
+            const { data } = await axios.post(`${backendUrl}/user/cancel-appointment`, { appointmentId }, { headers: { token } });
             if (data.success) {
                 toast.success(data.message);
                 getUserAppointments();
@@ -52,7 +52,7 @@ const MyAppointments = () => {
 
     const appointmentStripe = async (appointmentId) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/user/payment-stripe`, { appointmentId }, { headers: { token } });
+            const { data } = await axios.post(`${backendUrl}/user/payment-stripe`, { appointmentId }, { headers: { token } });
             if (data.success) {
                 const stripe = await stripePromise;
                 await stripe.redirectToCheckout({ sessionId: data.sessionId });
@@ -75,7 +75,7 @@ const MyAppointments = () => {
 
     const verifyPayment = async (sessionId) => {
         try {
-            const { data } = await axios.post(`${backendUrl}/api/user/verify-stripe`, { sessionId }, { headers: { token } });
+            const { data } = await axios.post(`${backendUrl}/user/verify-stripe`, { sessionId }, { headers: { token } });
             if (data.success) {
                 getUserAppointments(); // Refresh appointments to reflect payment status
             } else {
