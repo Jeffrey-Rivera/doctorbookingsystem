@@ -23,10 +23,11 @@ logs
 *.sln
 
 # Terraform (VERY IMPORTANT)
-.terraform/
-**/.terraform/*
-*.tfstate
-*.tfstate.*
-crash.log
 terraform.tfvars
 terraform.tfvars.json
+*.tfplan
+tfplan
+errored.tfstate
+*.tfstate
+*.tfstate.*
+backend/backend-secrets.env
