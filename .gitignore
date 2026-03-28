@@ -3,6 +3,7 @@
 .env.*
 backend/.env
 admin/.env
+backend/backend-secrets.env
 
 # Node
 node_modules
@@ -23,11 +24,11 @@ logs
 *.sln
 
 # Terraform (VERY IMPORTANT)
-terraform.tfvars
-terraform.tfvars.json
-*.tfplan
-tfplan
-errored.tfstate
-*.tfstate
-*.tfstate.*
-backend/backend-secrets.env
+terraform/.terraform/
+terraform/terraform.tfvars
+terraform/terraform.tfvars.json
+terraform/tfplan
+terraform/*.tfplan
+terraform/errored.tfstate
+terraform/*.tfstate
+terraform/*.tfstate.*
