@@ -9,7 +9,7 @@ const AdminCareers = () => {
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/resumes/all`, {
+        const response = await axios.get(`${backendUrl}/resumes/all`, {
           headers: { atoken: aToken }, // safe even if backend ignores it
         });
 
